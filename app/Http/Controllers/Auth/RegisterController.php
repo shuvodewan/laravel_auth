@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers\Auth;
 
+//register
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+
+use Session;
 
 class RegisterController extends Controller
 {
@@ -73,5 +81,23 @@ class RegisterController extends Controller
     public function showRegistrationForm()
     {
         return view('auth.register2');
+    }
+
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+       //$this->guard()->login($user);
+        
+        if ($response = $this->registered($request, $user)) {
+            return $response;
+        }
+        
+
+       return $request->wantsJson()
+                    ? new Response('', 201)
+                    : redirect($this->redirectPath()); 
     }
 }

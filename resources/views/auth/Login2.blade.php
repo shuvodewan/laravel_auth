@@ -27,8 +27,12 @@
   <!-- /.login-logo -->
   <div class="card">
     <div class="card-body login-card-body">
-      <p class="login-box-msg">Sign in to start your session</p>
-
+    @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+      <p class="login-box-msg success ">Please login to strat your session</p>
       <form action="{{route('login')}}" method="POST">
       @csrf
         <div class="input-group mb-3">
